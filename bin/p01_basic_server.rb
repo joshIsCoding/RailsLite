@@ -3,7 +3,7 @@ require 'rack'
 app = Proc.new do |env|
   req = Rack::Request.new( env )
   res = Rack::Response.new
-  res.write( "Hello world!" )
+  res.write( req.path )
   res.finish
 end
 
