@@ -1,5 +1,6 @@
 require 'active_support'
 require 'active_support/core_ext'
+require 'active_support/inflector'
 require 'erb'
 require_relative './session'
 
@@ -39,6 +40,10 @@ class ControllerBase
   # use ERB and binding to evaluate templates
   # pass the rendered html to render_content
   def render(template_name)
+    template = ERB.new( 
+      File.read( full_template_path( template_name ) )
+    )
+    render_content( template.result( binding ), 'text/html' )
   end
 
   # method exposing a `Session` object
@@ -50,6 +55,12 @@ class ControllerBase
   end
 
   private
+
+  def full_template_path( template_name )
+    base_path = File.dirname( __FILE__ ).chomp( '/lib' )
+    rel_path = "views/#{self.class.name.underscore}/#{template_name}.html.erb"
+    File.join( base_path, rel_path )
+  end
 
   def check_double_render!
     raise 'DoubleRenderError!' if already_built_response?
