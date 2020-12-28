@@ -20,6 +20,6 @@ class Session
   # serialize the hash into json and save in a cookie
   # add to the responses cookies
   def store_session(res)
-    res.set_cookie( COOKIE_NAME, @cookie.to_json )
+    res.set_cookie( COOKIE_NAME, { path: '/', value: @cookie.to_json } )
   end
 end
