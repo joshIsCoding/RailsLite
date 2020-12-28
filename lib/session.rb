@@ -2,6 +2,7 @@ require 'json'
 
 class Session
   COOKIE_NAME = '_rails_lite_app'
+
   # find the cookie for this app
   # deserialize the cookie into a hash
   def initialize(req)
