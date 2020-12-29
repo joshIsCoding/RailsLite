@@ -65,10 +65,10 @@ class ControllerBase
     raise 'DoubleRenderError!' if already_built_response?
   end
 
-  def prepare_response
+  def prepare_response( &proc )
     check_double_render!
 
-    yield
+    proc.call
 
     session.store_session( res )
     @already_built_response = true
