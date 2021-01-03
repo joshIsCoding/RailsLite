@@ -8,14 +8,20 @@ class Route
 
   # checks if pattern matches path and method matches request method
   def matches?(req)
-    req.request_method == http_method.to_s.upcase && @pattern.match?( req.path )
+    req.request_method == http_method.to_s.upcase && pattern.match?( req.path )
   end
 
   # use pattern to pull out route params (save for later?)
   # instantiate controller and call controller action
   def run(req, res)
-    controller = controller_class.new( req, res, {} )
+    controller = controller_class.new( req, res, route_params( req ) )
     controller.invoke_action( action_name )
+  end
+
+  private
+
+  def route_params( req )
+    pattern.match( req.path ).named_captures
   end
 end
 
@@ -34,6 +40,7 @@ class Router
   # evaluate the proc in the context of the instance
   # for syntactic sugar :)
   def draw(&proc)
+    self.instance_eval( &proc )
   end
 
   # make each of these methods that
