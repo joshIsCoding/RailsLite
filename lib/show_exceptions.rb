@@ -1,7 +1,7 @@
 require 'erb'
 
 class ShowExceptions
-  att_reader :app
+  attr_reader :app
   def initialize( app )
     @app = app
   end
@@ -16,7 +16,7 @@ class ShowExceptions
 
   private
 
-  def render_exception(e)
+  def render_exception( e )
   end
 
 end
