@@ -17,6 +17,11 @@ describe Static do
     expect(res.body).to match(/Hello there friend/)
   end
 
+  it 'records the correct mime-type' do
+    res = request.get('/public/hello.txt')
+    expect(res['Content-Type']).to eq( 'text/html' )
+  end
+
   it '404s if url root is known but it can\'t find the file' do
     res = request.get('/public/nicholas.jpg')
     expect(res.status).to be(404)
