@@ -56,7 +56,18 @@ class ControllerBase
     render unless already_built_response?
   end
 
+  protected
+
+  def form_authenticity_token
+    token = SecureRandom.hex( 16 )
+    store_auth_token( token )
+    token
+  end
+
   private
+
+  def store_auth_token( token )
+  end
 
   def full_template_path( template_name )
     base_path = File.dirname( __FILE__ ).chomp( '/lib' )
