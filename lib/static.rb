@@ -43,7 +43,7 @@ class Static
   private
 
   def extract_ext
-    ext = path.split( '.' ).last
+    path[/\.\w+$/]
   end
 
   def set_path( path )
