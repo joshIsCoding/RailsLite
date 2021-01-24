@@ -8,11 +8,11 @@ describe ControllerBase do
   let(:controller_base) { ControllerBase.new(req, res) }
 
   describe '#form_authenticity_token' do
-    it 'adds new cookie with \'authenticity_token\' name to response' do
+    it 'adds new cookie with \'_csrf_token\' name to response' do
       controller_base.form_authenticity_token
       cookie_str = res.headers['Set-Cookie']
       cookie = Rack::Utils.parse_query(cookie_str)
-      expect(cookie['authenticity_token']).not_to be_nil
+      expect(cookie['_csrf_token']).not_to be_nil
     end
 
     it 'returns the same token set in the cookie' do
@@ -20,7 +20,7 @@ describe ControllerBase do
       cookie_str = res.headers['Set-Cookie']
       cookie = Rack::Utils.parse_query(cookie_str)
 
-      expect(cookie['authenticity_token']).to eq(token)
+      expect(cookie['_csrf_token']).to eq(token)
     end
 
     it 'returns the same token when called multiple times in the same response' do
@@ -82,8 +82,8 @@ describe ControllerBase do
       it 'doesn\'t raise an error when a valid authenticity token is given' do
 
         # Simulate auth token being passed in both in params from form and cookies
-        dummy_controller.params['authenticity_token'] = 'mocktoken'
-        req.env['HTTP_COOKIE'] = 'authenticity_token=mocktoken'
+        dummy_controller.params['authenticy_token'] = 'mocktoken'
+        req.env['HTTP_COOKIE'] = '_csrf_token=mocktoken'
 
         expect { dummy_controller.invoke_action(:index) }.not_to raise_error
       end
