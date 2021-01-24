@@ -5,6 +5,9 @@ require 'erb'
 require_relative './session'
 
 class ControllerBase
+  AUTH_COOKIE = '_csrf_token'
+  AUTH_PARAM = 'authenticy_token'
+
   attr_reader :req, :res, :params
 
   # Setup the controller
@@ -29,7 +32,7 @@ class ControllerBase
   # Populate the response with content.
   # Set the response's content type to the given type.
   # Raise an error if the developer tries to double render.
-  def render_content(content, content_type)
+  def render_content( content, content_type )
     prepare_response do
       res.content_type = content_type
       res.write( content )
@@ -59,14 +62,15 @@ class ControllerBase
   protected
 
   def form_authenticity_token
-    token = SecureRandom.hex( 16 )
-    store_auth_token( token )
-    token
+    @auth_token ||= SecureRandom.hex( 16 )
+    store_auth_token
+    @auth_token
   end
 
   private
 
-  def store_auth_token( token )
+  def store_auth_token
+    res.set_cookie( AUTH_COOKIE, '/', @auth_token )
   end
 
   def full_template_path( template_name )
