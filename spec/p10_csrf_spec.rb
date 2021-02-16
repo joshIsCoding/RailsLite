@@ -82,7 +82,7 @@ describe ControllerBase do
       it 'doesn\'t raise an error when a valid authenticity token is given' do
 
         # Simulate auth token being passed in both in params from form and cookies
-        dummy_controller.params['authenticy_token'] = 'mocktoken'
+        dummy_controller.params['authenticity_token'] = 'mocktoken'
         req.env['HTTP_COOKIE'] = '_csrf_token=mocktoken'
 
         expect { dummy_controller.invoke_action(:index) }.not_to raise_error
