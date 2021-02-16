@@ -6,9 +6,19 @@ require_relative './session'
 
 class ControllerBase
   AUTH_COOKIE = '_csrf_token'
-  AUTH_PARAM = 'authenticy_token'
+  AUTH_PARAM = 'authenticity_token'
+
+  @forgery_protection = false
 
   attr_reader :req, :res, :params
+
+  def self.protect_from_forgery
+    @forgery_protection = true
+  end
+
+  def self.protect_from_forgery?
+    @forgery_protection
+  end
 
   # Setup the controller
   def initialize(req, res, route_params = {} )
@@ -55,11 +65,17 @@ class ControllerBase
 
   # use this with the router to call action_name (:index, :show, :create...)
   def invoke_action(name)
+    check_authenticity_token if self.class.protect_from_forgery? && !get_request?
+
     send( name )
-    render unless already_built_response?
+    render( name ) unless already_built_response?
   end
 
-  protected
+  def check_authenticity_token
+    unless auth_tokens_match?
+      raise 'Invalid authenticity token'
+    end
+  end
 
   def form_authenticity_token
     @auth_token ||= SecureRandom.hex( 16 )
@@ -70,7 +86,17 @@ class ControllerBase
   private
 
   def store_auth_token
-    res.set_cookie( AUTH_COOKIE, '/', @auth_token )
+    res.set_cookie( AUTH_COOKIE, { path: '/', value: @auth_token } )
+  end
+
+  def auth_tokens_match?
+    return false if params[AUTH_PARAM].blank?
+
+    req.cookies[AUTH_COOKIE] == params[AUTH_PARAM]
+  end
+
+  def get_request?
+    req.request_method == 'GET'
   end
 
   def full_template_path( template_name )
