@@ -3,6 +3,7 @@ require 'active_support/core_ext'
 require 'active_support/inflector'
 require 'erb'
 require_relative './session'
+require_relative './flash'
 require_relative './action_view_lite/view_methods'
 
 class ControllerBase
@@ -13,7 +14,7 @@ class ControllerBase
 
   @forgery_protection = false
 
-  attr_reader :req, :res, :params
+  attr_reader :req, :res, :params, :flash
 
   def self.protect_from_forgery
     @forgery_protection = true
@@ -27,6 +28,7 @@ class ControllerBase
   def initialize(req, res, route_params = {} )
     @req, @res= req, res
     @params = route_params.merge( req.params )
+    @flash = Flash.new( req )
   end
 
   # Helper method to alias @already_built_response
