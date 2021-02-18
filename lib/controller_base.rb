@@ -3,8 +3,11 @@ require 'active_support/core_ext'
 require 'active_support/inflector'
 require 'erb'
 require_relative './session'
+require_relative './action_view_lite/view_methods'
 
 class ControllerBase
+  include ViewMethods
+
   AUTH_COOKIE = '_csrf_token'
   AUTH_PARAM = 'authenticity_token'
 
