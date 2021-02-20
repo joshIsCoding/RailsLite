@@ -11,7 +11,7 @@ module ViewMethods
     html_class = html_options[:class] || 'button_to'
     method = html_options[:method] || 'post'
     <<~HTML
-      <form method="#{method}" action="#{path}" class="#{opts[:class]}">
+      <form method="#{method}" action="#{path}" class="#{html_options[:class]}">
         <input type="submit" value="#{name}"/>
       </form>
     HTML
