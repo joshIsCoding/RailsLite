@@ -7,7 +7,7 @@ module ViewMethods
     HTML
   end
 
-  def button_to( name, path, ""html_options )
+  def button_to( name, path, **html_options )
     html_class = html_options[:class] || 'button_to'
     method = html_options[:method] || 'post'
     <<~HTML
