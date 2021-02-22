@@ -8,7 +8,7 @@ class Route
 
   # checks if pattern matches path and method matches request method
   def matches?(req)
-    req.request_method == http_method.to_s.upcase && pattern.match?( req.path )
+    request_method( req ) == http_method.to_s.upcase && pattern.match?( req.path )
   end
 
   # use pattern to pull out route params (save for later?)
@@ -22,6 +22,10 @@ class Route
 
   def route_params( req )
     pattern.match( req.path ).named_captures
+  end
+
+  def request_method( req )
+    req.params['_method']&.upcase || req.request_method
   end
 end
 
@@ -53,6 +57,7 @@ class Router
 
   # should return the route that matches this request
   def match(req)
+    intercept_emulated_method( req )
     routes.find { |r| r.matches?( req ) }
   end
 
@@ -65,5 +70,12 @@ class Router
       res.status = 404
       res.write( "404 - No route matching #{req.request_method} #{req.path} was found." )
     end
+  end
+
+  private
+
+  def intercept_emulated_method( req )
+    req.update_param( 'REQUEST_METHOD', req.params['_method'].upcase ) if req.params['_method']
+    puts req.request_method
   end
 end
