@@ -14,19 +14,19 @@ describe Route do
     it 'matches simple regular expression' do
       index_route = Route.new(Regexp.new('^/users$'), :get, 'x', :x)
       allow(req).to receive(:path) { '/users' }
-      expect(index_route.matches?(req)).to be_truthy
+      expect(index_route.matches?(req, 'GET' )).to be_truthy
     end
 
     it 'matches regular expression with capture' do
       index_route = Route.new(Regexp.new('^/users/(?<id>\\d+)$'), :get, 'x', :x)
       allow(req).to receive(:path) { '/users/1' }
-      expect(index_route.matches?(req)).to be_truthy
+      expect(index_route.matches?( req, 'GET' )).to be_truthy
     end
 
     it 'correctly doesn\'t match regular expression with capture' do
       index_route = Route.new(Regexp.new('^/users/(?<id>\\d+)$'), :get, 'UsersController', :index)
       allow(req).to receive(:path) { '/statuses/1' }
-      expect(index_route.matches?(req)).to be_falsey
+      expect(index_route.matches?( req, 'GET' )).to be_falsey
     end
   end
 
@@ -54,7 +54,7 @@ describe Route do
 end
 
 describe Router do
-  let(:req) { Rack::Request.new({'rack-input' => {}}) }
+  let(:req) { Rack::Request.new({'rack.input' => {}}) }
   let(:res) { Rack::MockResponse.new('200', {}, []) }
 
   describe '#add_route' do
