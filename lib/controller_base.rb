@@ -5,6 +5,7 @@ require 'erb'
 require_relative './session'
 require_relative './flash'
 require_relative './action_view_lite/view_methods'
+require_relative './action_controller_lite/parameters'
 
 class ControllerBase
   include ViewMethods
@@ -27,7 +28,7 @@ class ControllerBase
   # Setup the controller
   def initialize(req, res, route_params = {} )
     @req, @res= req, res
-    @params = route_params.merge( req.params )
+    @params = ActionControllerLite::Parameters.new( route_params.merge( req.params ) )
     @flash = Flash.new( req )
   end
 
