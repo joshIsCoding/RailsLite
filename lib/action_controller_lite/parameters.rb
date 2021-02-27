@@ -21,7 +21,14 @@ module ActionControllerLite
     end
 
     def []( key )
-      @params[key.to_sym]
+      val = @params[key.to_sym]
+
+      if val&.is_a?( Hash )
+        val = self.class.new( val )
+        return val.permitted? ? val.permit! : val
+      elsif val
+        return val
+      end
     end
 
     def []=( key, value )
@@ -36,6 +43,10 @@ module ActionControllerLite
     def permit!
       @permitted = true
       self
+    end
+
+    def permitted?
+      @permitted
     end
 
     private
