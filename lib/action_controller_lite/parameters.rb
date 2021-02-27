@@ -5,7 +5,7 @@ module ActionControllerLite
 
     def initialize( param_hash )
       @params = keys_to_sym( param_hash )
-      @permitted = class.permit_all_parameters
+      @permitted = self.class.permit_all_parameters
     end
 
     def self.permit_all_parameters
