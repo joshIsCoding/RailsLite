@@ -28,6 +28,16 @@ module ActionControllerLite
       @params[key.to_sym] = value
     end
 
+    def permit( *keys )
+      permitted_params = deep_regenerate( @params, *keys )
+      self.new( permitted_params ).permit!
+    end
+
+    def permit!
+      @permitted = true
+      self
+    end
+
     private
 
     def keys_to_sym( hash )
@@ -36,9 +46,19 @@ module ActionControllerLite
         sym_hash[k.to_sym] = v.is_a?( Hash ) ? keys_to_sym( v ) : v
       end  
       sym_hash
-    end 
+    end
 
-
-
+    def deep_regenerate( hash, *target_keys )
+      new_hash = {}
+      target_keys.each do |k|
+        if k.is_a?( Hash ) # keys can map to arrays of nested keys, eg. permit_me: [ :p2, p3, :p4 ]
+          nested_k = k.keys.first
+          new_hash[nested_k] = deep_regenerate( hash[nested_k], *k[nested_k] )
+        else
+          new_hash[k] = hash[k]
+        end
+      end
+      new_hash
+    end
   end
 end
