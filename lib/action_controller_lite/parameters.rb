@@ -37,7 +37,7 @@ module ActionControllerLite
 
     def permit( *keys )
       permitted_params = deep_regenerate( @params, *keys )
-      self.new( permitted_params ).permit!
+      self.class.new( permitted_params ).permit!
     end
 
     def permit!
