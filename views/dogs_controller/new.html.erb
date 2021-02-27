@@ -1,7 +1,9 @@
 <% if flash[:errors] %>
+  <ul>
   <% flash[:errors].each do |error| %>
-    <%= error %>
+    <li><strong><%= error %></strong></li>
   <% end %>
+  </ul>
 <% end %>
 
 <form action="/dogs" method="POST">
@@ -9,8 +11,8 @@
     <input type="text" name="dog[name]" value="<%= @dog.name %>">
   </label>
 
-  <!-- <label>Form Authenticity Token
-    <input type="text" name="authenticity_token" value="<%#= form_authenticity_token %>">
+  <label>Form Authenticity Token
+    <input type="text" name="authenticity_token" value="<%= form_authenticity_token %>">
   </label> -->
 
   <label>Owner
