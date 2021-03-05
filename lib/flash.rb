@@ -13,7 +13,6 @@ module ActionDispatchLite
     end
 
     def []=( key, val )
-      debugger
       @future[key.to_s] = val
     end
 
@@ -26,7 +25,7 @@ module ActionDispatchLite
     end
   end
 
-  def FlashNow
+  class FlashNow
 
     def initialize( req )
       @now = extract_flash_cookie( req )
