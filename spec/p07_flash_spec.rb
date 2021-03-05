@@ -2,10 +2,10 @@ require 'rack'
 require 'flash'
 require 'controller_base'
 
-describe Flash do
+describe ActionDispatchLite::Flash do
   let(:req) { Rack::Request.new({'rack.input' => {}}) }
   let(:res) { Rack::Response.new([], '200', {}) }
-  let(:flash) { Flash.new(req) }
+  let(:flash) { described_class.new(req) }
 
   describe '#[]=' do
     it 'sets data in flash' do
@@ -45,7 +45,7 @@ describe Flash do
 
       second_req.cookies.merge!(cookie)
 
-      second_flash = Flash.new(second_req)
+      second_flash = described_class.new(second_req)
       second_flash.store_flash(second_res)
 
       second_cookie_str = second_res.headers['Set-Cookie']
@@ -61,12 +61,12 @@ describe Flash do
     it 'reads data from flash cookie' do
       cookie = { '_rails_lite_app_flash' => { 'best_pizza' => 'Arizmendi' }.to_json }
       req.cookies.merge!(cookie)
-      updated_flash = Flash.new(req)
+      updated_flash = described_class.new(req)
       expect(updated_flash['best_pizza']).to eq('Arizmendi')
     end
 
     it 'can be accessed using either strings or symbols' do
-      flash = Flash.new(req)
+      flash = described_class.new(req)
       flash['notice'] = 'test'
       expect(flash[:notice]).to eq('test')
     end

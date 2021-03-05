@@ -29,7 +29,7 @@ class ControllerBase
   def initialize(req, res, route_params = {} )
     @req, @res= req, res
     @params = ActionControllerLite::Parameters.new( route_params.merge( req.params ) )
-    @flash = Flash.new( req )
+    @flash = ActionDispatchLite::Flash.new( req )
   end
 
   # Helper method to alias @already_built_response
