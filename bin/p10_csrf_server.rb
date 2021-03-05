@@ -23,16 +23,14 @@ class Dog
   end
 
   def valid?
-    unless @owner.present?
-      errors << "Owner can't be blank"
-      return false
+    errors << "Owner can't be blank" unless @owner.present?
+    errors << "Name can't be blank" unless @name.present?
+    
+    if errors.any?
+      false
+    else
+      true
     end
-
-    unless @name.present?
-      errors << "Name can't be blank"
-      return false
-    end
-    true
   end
 
   def save
