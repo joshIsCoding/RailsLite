@@ -49,7 +49,7 @@ class DogsController < ControllerBase
   protect_from_forgery
 
   def create
-    @dog = Dog.new( dog_params[:dog] )
+    @dog = Dog.new( dog_params )
     if @dog.save
       flash[:notice] = "Saved dog successfully"
       redirect_to "/dogs"
@@ -72,7 +72,7 @@ class DogsController < ControllerBase
   private
 
   def dog_params
-    params.permit( dog: [ :name, :owner ])
+    params.require( :dog ).permit( :name, :owner )
   end
 end
 
