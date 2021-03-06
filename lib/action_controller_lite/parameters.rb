@@ -1,5 +1,17 @@
 module ActionControllerLite
 
+  class ParameterMissing < StandardError
+    attr_reader :param
+
+    def initialize( param )
+      @param = param
+      super
+    end
+    def message
+      "The required parameter was not present: #{param}"
+    end
+  end
+
   # My implementation of strong params
   class Parameters
 
@@ -33,6 +45,16 @@ module ActionControllerLite
 
     def []=( key, value )
       @params[key.to_sym] = value
+    end
+
+    def require( *keys )
+      if keys.length > 1
+        self[keys.first].require( *keys[1..-1] )
+      else
+        return self[keys.first] if self[keys.first]
+
+        raise ParameterMissing.new( keys.first )
+      end
     end
 
     def permit( *keys )
