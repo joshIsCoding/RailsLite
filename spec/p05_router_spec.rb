@@ -51,13 +51,6 @@ describe Route do
       index_route.run(req, res)
     end
   end
-
-  describe '#static_segments' do
-    it 'returns the static segment of a simple route path as an array of substrings' do
-      index_route = Route.new(Regexp.new('^/users$'), :get, 'x', :x)
-      expect( index_route.static_segments ).to eq( [ 'users' ] )
-    end
-  end
 end
 
 describe Router do
