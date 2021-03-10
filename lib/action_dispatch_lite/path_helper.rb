@@ -10,10 +10,22 @@ module ActionDispatchLite
       @rest_type = infer_rest_type
     end
 
+    def method_name
+      name = case rest_type
+             when :edit, :new
+               [rest_type] + static_segments[0..-2] + [singularize( static_segments.last )]
+             when :resource
+               static_segments[0..-2] << singularize( static_segments.last )
+             else
+               static_segments
+             end
+      "#{name.join( '_' )}_path"
+    end
+
     def static_segments
       pattern.chomp( '/new' ).chomp( '/edit' )
-                   .scan( /\/(\w+)/ )
-                   .flatten
+             .scan( /\/(\w+)/ )
+             .flatten
     end
 
     private
@@ -31,6 +43,16 @@ module ActionDispatchLite
         :resource
       else
         :resources
+      end
+    end
+
+    def singularize( plural )
+      if plural.end_with?( 'ies' )
+        plural.chomp( 'ies' ) + 'y'
+      elsif plural.end_with?( 's' )
+        plural.chomp( 's' )
+      else
+        plural
       end
     end
   end
