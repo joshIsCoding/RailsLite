@@ -73,6 +73,34 @@ describe ActionDispatchLite::PathHelper do
     end
   end
 
+  describe '#pattern' do
+    reg_strings = { 
+      '^/account/users$' => '/account/users',
+      '^/users/:id$' => '/users/:id',
+      '^/chippy_teas/edit$' => '/chippy_teas/edit'
+    }
+
+    context 'when the route pattern is a regex' do
+
+      it 'converts regex paths to string url paths on init' do
+        reg_strings.each do |regex, path|
+          ph = described_class.new( Route.new( Regexp.new( regex ), :get, 'CakeOfTheDay', :wow ) )
+          expect( ph.pattern ).to eq( path )
+        end
+      end
+    end
+
+    context 'when the route pattern is a string' do
+
+      it 'does not alter the path string' do
+        reg_strings.values.each do |path|
+          ph = described_class.new( Route.new( path, :get, 'Paths', :x ) )
+          expect( ph.pattern ).to eq( path )
+        end
+      end
+    end
+  end
+
   describe '#static_segments' do
     let( :path ) { '^/users$' }
 
