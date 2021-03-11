@@ -31,7 +31,14 @@ module ActionDispatchLite
     private
 
     def stringify_pattern( pattern )
-      pattern.is_a?( String ) ? pattern : pattern.inspect.chomp( '$/' ).delete_prefix( '/^' )
+      if pattern.is_a?( String )
+        pattern
+      else
+        pattern.inspect
+               .chomp( '$/' )
+               .delete_prefix( '/^' )
+               .gsub( '\\/', '/' )
+      end
     end
 
     def infer_rest_type
