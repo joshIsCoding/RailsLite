@@ -1,12 +1,13 @@
-require_relative './action_dispatch_lite/path_utilities'
+require_relative './action_dispatch_lite/path_helper'
 
 class Route
-  include ActionDispatchLite::PathUtilities
+  include ActionDispatchLite::PathHelper
 
-  attr_reader :pattern, :http_method, :controller_class, :action_name
+  attr_reader :pattern, :http_method, :controller_class, :action_name, :path
 
   def initialize(pattern, http_method, controller_class, action_name)
     @pattern, @http_method, @controller_class = pattern, http_method, controller_class
+    @path = stringify_path( pattern )
     @action_name = action_name
   end
 
@@ -22,8 +23,8 @@ class Route
     controller.invoke_action( action_name )
   end
 
-  def static_segments
-    super( pattern )
+  def method_name
+    super( path )
   end
 
   private
@@ -49,6 +50,7 @@ class Router
   # for syntactic sugar :)
   def draw(&proc)
     self.instance_eval( &proc )
+    define_route_helpers
   end
 
   # make each of these methods that
@@ -79,5 +81,15 @@ class Router
 
   def request_method( req )
     req.params['_method']&.upcase || req.request_method
+  end
+
+  def define_route_helpers
+    routes.each do |route|
+      ControllerBase.class_eval( <<-RUBY )
+        def #{route.method_name}_path
+          \"#{route.path}\"
+        end
+      RUBY
+    end
   end
 end
