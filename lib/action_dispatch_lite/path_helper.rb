@@ -1,31 +1,24 @@
 module ActionDispatchLite
-  class PathHelper
+  module PathHelper
     PATH_SUFFIXES = %w[ edit new ]
 
-    attr_reader :route, :path, :rest_type
-
-    def initialize( route )
-      @route = route
-      @path = stringify_path( route.pattern )
-      @rest_type = infer_rest_type
-    end
-
-    def method_name
-      name = case rest_type
+    def method_name( path )
+      segments = static_segments( path )
+      name = case rest_type( path )
              when :edit, :new
-               [rest_type] + static_segments[0..-2] + [singularize( static_segments.last )]
+               [rest_type( path )] + segments[0..-2] << singularize( segments.last )
              when :resource
-               static_segments[0..-2] << singularize( static_segments.last )
+               segments[0..-2] << singularize( segments.last )
              else
-               static_segments
+               segments
              end
-      "#{name.join( '_' )}_path"
+      name.join( '_' )
     end
 
-    def static_segments
+    def static_segments( path )
       path.chomp( '/new' ).chomp( '/edit' )
-             .scan( /\/(\w+)/ )
-             .flatten
+          .scan( /\/(\w+)/ )
+          .flatten
     end
 
     private
@@ -41,7 +34,7 @@ module ActionDispatchLite
       end
     end
 
-    def infer_rest_type
+    def rest_type( path )
       if path.end_with?( '/edit' )
         :edit
       elsif path.end_with?( "/new" )
