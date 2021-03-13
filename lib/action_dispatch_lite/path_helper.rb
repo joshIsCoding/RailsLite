@@ -2,11 +2,11 @@ module ActionDispatchLite
   class PathHelper
     PATH_SUFFIXES = %w[ edit new ]
 
-    attr_reader :route, :pattern, :rest_type
+    attr_reader :route, :path, :rest_type
 
     def initialize( route )
       @route = route
-      @pattern = stringify_pattern( route.pattern )
+      @path = stringify_path( route.pattern )
       @rest_type = infer_rest_type
     end
 
@@ -23,18 +23,18 @@ module ActionDispatchLite
     end
 
     def static_segments
-      pattern.chomp( '/new' ).chomp( '/edit' )
+      path.chomp( '/new' ).chomp( '/edit' )
              .scan( /\/(\w+)/ )
              .flatten
     end
 
     private
 
-    def stringify_pattern( pattern )
-      if pattern.is_a?( String )
-        pattern
+    def stringify_path( path )
+      if path.is_a?( String )
+        path
       else
-        pattern.inspect
+        path.inspect
                .chomp( '$/' )
                .delete_prefix( '/^' )
                .gsub( '\\/', '/' )
@@ -42,11 +42,11 @@ module ActionDispatchLite
     end
 
     def infer_rest_type
-      if pattern.end_with?( '/edit' )
+      if path.end_with?( '/edit' )
         :edit
-      elsif pattern.end_with?( "/new" )
+      elsif path.end_with?( "/new" )
         :new
-      elsif pattern.end_with?( "/:id" )
+      elsif path.end_with?( "/:id" )
         :resource
       else
         :resources

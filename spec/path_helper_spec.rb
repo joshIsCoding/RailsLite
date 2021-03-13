@@ -73,7 +73,7 @@ describe ActionDispatchLite::PathHelper do
     end
   end
 
-  describe '#pattern' do
+  describe '#path' do
     reg_strings = { 
       '^/account/users$' => '/account/users',
       '^/users/:id$' => '/users/:id',
@@ -85,7 +85,7 @@ describe ActionDispatchLite::PathHelper do
       it 'converts regex paths to string url paths on init' do
         reg_strings.each do |regex, path|
           ph = described_class.new( Route.new( Regexp.new( regex ), :get, 'CakeOfTheDay', :wow ) )
-          expect( ph.pattern ).to eq( path )
+          expect( ph.path ).to eq( path )
         end
       end
     end
@@ -95,7 +95,7 @@ describe ActionDispatchLite::PathHelper do
       it 'does not alter the path string' do
         reg_strings.values.each do |path|
           ph = described_class.new( Route.new( path, :get, 'Paths', :x ) )
-          expect( ph.pattern ).to eq( path )
+          expect( ph.path ).to eq( path )
         end
       end
     end
