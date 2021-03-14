@@ -6,7 +6,7 @@
   </ul>
 <% end %>
 
-<form action="/dogs" method="POST">
+<form action="<%= dogs_path %>" method="POST">
   <label>Name
     <input type="text" name="dog[name]" value="<%= @dog.name %>">
   </label>
