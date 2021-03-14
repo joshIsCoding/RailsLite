@@ -48,6 +48,11 @@ end
 class DogsController < ControllerBase
   protect_from_forgery
 
+  def show
+    # implement properly once active_record_lite included
+    render :show
+  end
+
   def create
     @dog = Dog.new( dog_params )
     if @dog.save
