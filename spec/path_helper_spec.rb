@@ -5,31 +5,7 @@ require './lib/action_dispatch_lite/path_helper'
 describe ActionDispatchLite::PathHelper do
   PATHS = { edit: '/edit', new: '/new', id: '/:id' }
 
-  subject( :path_helper ) { described_class.new( route )}
-
-  let( :route ) { Route.new( Regexp.new( path ), :get, 'CakeOfTheDay', :wow ) }
-  
-  describe '#rest_type' do
-
-    PATHS.each do |sym, suffix|
-
-      context "when the path ends with '#{suffix}'" do
-        let( :path ) { "^/cakes#{suffix}$" }
-
-        it "is set to :#{sym} on init" do
-          expect( path_helper.rest_type ).to eq( sym == :id ? :resource : sym )
-        end
-      end
-    end
-
-    context "when the path isn't recognised as an edit, new or resource path" do
-      let( :path ) { "^/cakes$" }
-
-      it 'is set to :resources on init' do
-        expect( path_helper.rest_type ).to eq( :resources )
-      end
-    end
-  end
+  subject( :route ) { Route.new( Regexp.new( path ), :get, 'CakeOfTheDay', :wow ) }
 
   describe '#method_name' do
 
@@ -38,8 +14,8 @@ describe ActionDispatchLite::PathHelper do
       it 'attempts to singularise the resources plural, when appropriate for the path type' do
         { 'cats' => 'cat', 'cities' => 'city', 'equipment' => 'equipment' }.each do |pl, si|
           route = Route.new( Regexp.new( "^/#{pl}/:id$" ), :get, 'Test', :show )
-          expect( described_class.new( route ).method_name )
-          .to start_with( "#{si}_" )
+          expect( route.method_name )
+          .to eq( si )
         end
       end
     end
@@ -50,8 +26,8 @@ describe ActionDispatchLite::PathHelper do
       context "when the path ends with '#{path_end}'" do
         let( :path ) { "^/cakes#{path_end}$" }
 
-        it "returns a name in the form of #{sym}_resource_path" do
-          expect( path_helper.method_name ).to start_with( sym.to_s )
+        it "returns a name in the form of #{sym}_resource" do
+          expect( route.method_name ).to start_with( sym.to_s )
         end
       end
     end
@@ -59,16 +35,16 @@ describe ActionDispatchLite::PathHelper do
     context "when the path ends with '/:id'" do
       let( :path ) { "^/cakes/:id$" }
 
-      it 'returns the the singularized resource as resource_path' do
-        expect( path_helper.method_name ).to eq 'cake_path'
+      it 'returns the the singularized resource name' do
+        expect( route.method_name ).to eq 'cake'
       end
     end
 
     context 'when the path ends with the pluralised resource' do
       let( :path ) { '^/cakes$' }
 
-      it 'returns the pluralised resource as resources_path' do
-        expect( path_helper.method_name ).to eq 'cakes_path'
+      it 'returns the pluralised resource name' do
+        expect( route.method_name ).to eq 'cakes'
       end
     end
   end
@@ -84,8 +60,8 @@ describe ActionDispatchLite::PathHelper do
 
       it 'converts regex paths to string url paths on init' do
         reg_strings.each do |regex, path|
-          ph = described_class.new( Route.new( Regexp.new( regex ), :get, 'CakeOfTheDay', :wow ) )
-          expect( ph.path ).to eq( path )
+          route = Route.new( Regexp.new( regex ), :get, 'CakeOfTheDay', :wow )
+          expect( route.path ).to eq( path )
         end
       end
     end
@@ -94,8 +70,8 @@ describe ActionDispatchLite::PathHelper do
 
       it 'does not alter the path string' do
         reg_strings.values.each do |path|
-          ph = described_class.new( Route.new( path, :get, 'Paths', :x ) )
-          expect( ph.path ).to eq( path )
+          route = Route.new( path, :get, 'Paths', :x )
+          expect( route.path ).to eq( path )
         end
       end
     end
@@ -105,7 +81,7 @@ describe ActionDispatchLite::PathHelper do
     let( :path ) { '^/users$' }
 
     it 'returns the static segment of a simple route path as an array of substrings' do
-      expect( path_helper.static_segments ).to eq( [ 'users' ] )
+      expect( route.static_segments( route.path ) ).to eq( [ 'users' ] )
     end
   end
 end
